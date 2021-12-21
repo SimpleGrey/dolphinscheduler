@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -139,5 +140,16 @@ public class TaskInstanceController extends BaseController {
         Map<String, Object> result = taskInstanceService.forceTaskSuccess(loginUser, projectCode, id);
         return returnDataList(result);
     }
+
+    public Result<Object> rankExecuteTime(@RequestParam(value = "top", required = false, defaultValue = "10") Integer top,
+                                          @RequestParam(value = "stateType", required = false) ExecutionStatus stateType,
+                                          @RequestParam(value = "startDate", required = false) String startTime,
+                                          @RequestParam(value = "endDate", required = false) String endTime) {
+        // check top number is not more than 100 to cause performance degraation
+        check(top);
+
+
+    }
+
 
 }
