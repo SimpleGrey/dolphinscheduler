@@ -1554,6 +1554,15 @@ public class ProcessService {
     }
 
     /**
+     * find tasks by batch ids
+     * @param taskIds
+     * @return
+     */
+    public List<TaskInstance> findTaskInstancesByIds(List<Integer> taskIds) {
+        return taskInstanceMapper.selectBatchIds(taskIds);
+    }
+
+    /**
      * package task instance
      */
     public void packageTaskInstance(TaskInstance taskInstance, ProcessInstance processInstance) {

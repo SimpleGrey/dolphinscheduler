@@ -86,6 +86,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1506,47 +1507,25 @@ public class WorkflowExecuteThread {
     }
 
     /**
-     * get recovery task instance
-     *
-     * @param taskId task id
-     * @return recovery task instance
-     */
-    private TaskInstance getRecoveryTaskInstance(String taskId) {
-        if (!StringUtils.isNotEmpty(taskId)) {
-            return null;
-        }
-        try {
-            Integer intId = Integer.valueOf(taskId);
-            TaskInstance task = processService.findTaskInstanceById(intId);
-            if (task == null) {
-                logger.error("start node id cannot be found: {}", taskId);
-            } else {
-                return task;
-            }
-        } catch (Exception e) {
-            logger.error("get recovery task instance failed ", e);
-        }
-        return null;
-    }
-
-    /**
      * get start task instance list
      *
      * @param cmdParam command param
      * @return task instance list
      */
     private List<TaskInstance> getStartTaskInstanceList(String cmdParam) {
-
         List<TaskInstance> instanceList = new ArrayList<>();
         Map<String, String> paramMap = JSONUtils.toMap(cmdParam);
 
         if (paramMap != null && paramMap.containsKey(CMD_PARAM_RECOVERY_START_NODE_STRING)) {
-            String[] idList = paramMap.get(CMD_PARAM_RECOVERY_START_NODE_STRING).split(Constants.COMMA);
-            for (String nodeId : idList) {
-                TaskInstance task = getRecoveryTaskInstance(nodeId);
-                if (task != null) {
-                    instanceList.add(task);
-                }
+            String[] idStrList = paramMap.get(CMD_PARAM_RECOVERY_START_NODE_STRING).split(Constants.COMMA);
+            List<Integer> idList = Arrays.stream(idStrList).map(e -> Integer.valueOf(e)).collect(Collectors.toList());
+            instanceList = processService.findTaskInstancesByIds(idList);
+
+            // find elem that can't found out in database
+            List<Integer> existIds = instanceList.stream().map(e -> e.getId()).collect(Collectors.toList());
+            idList.removeAll(existIds);
+            if (CollectionUtils.isNotEmpty(idList)) {
+                logger.error("start node id cannot be found: {}", StringUtils.join(idList, ", "));
             }
         }
         return instanceList;

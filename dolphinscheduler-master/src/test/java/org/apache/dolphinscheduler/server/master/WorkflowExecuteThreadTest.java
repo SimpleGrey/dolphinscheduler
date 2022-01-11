@@ -45,14 +45,7 @@ import org.apache.dolphinscheduler.service.process.ProcessService;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.Assert;
@@ -144,6 +137,7 @@ public class WorkflowExecuteThreadTest {
     @Test
     public void testGetStartTaskInstanceList() {
         try {
+            List<TaskInstance> instanceList = new ArrayList<>();
             TaskInstance taskInstance1 = new TaskInstance();
             taskInstance1.setId(1);
             TaskInstance taskInstance2 = new TaskInstance();
@@ -152,12 +146,14 @@ public class WorkflowExecuteThreadTest {
             taskInstance3.setId(3);
             TaskInstance taskInstance4 = new TaskInstance();
             taskInstance4.setId(4);
+            instanceList.add(taskInstance1);
+            instanceList.add(taskInstance2);
+            instanceList.add(taskInstance3);
+            instanceList.add(taskInstance4);
+
             Map<String, String> cmdParam = new HashMap<>();
             cmdParam.put(CMD_PARAM_RECOVERY_START_NODE_STRING, "1,2,3,4");
-            Mockito.when(processService.findTaskInstanceById(1)).thenReturn(taskInstance1);
-            Mockito.when(processService.findTaskInstanceById(2)).thenReturn(taskInstance2);
-            Mockito.when(processService.findTaskInstanceById(3)).thenReturn(taskInstance3);
-            Mockito.when(processService.findTaskInstanceById(4)).thenReturn(taskInstance4);
+            Mockito.when(processService.findTaskInstancesByIds(Arrays.asList(new Integer[]{1, 2, 3, 4}))).thenReturn(instanceList);
             Class<WorkflowExecuteThread> masterExecThreadClass = WorkflowExecuteThread.class;
             Method method = masterExecThreadClass.getDeclaredMethod("getStartTaskInstanceList", String.class);
             method.setAccessible(true);
