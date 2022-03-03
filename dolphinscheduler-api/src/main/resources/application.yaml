@@ -28,6 +28,10 @@ server:
     max-http-form-post-size: 5000000
 
 spring:
+  config:
+    use-legacy-processing: true
+    activate:
+      on-profile: mysql
   application:
     name: api-server
   main:
@@ -41,10 +45,13 @@ spring:
   messages:
     basename: i18n/messages
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/dolphinscheduler
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.29.108.184:30474/ds_201?useUnicode=true&characterEncoding=UTF-8
+    #  datasource:
+    #    driver-class-name: org.postgresql.Driver
+    #    url: jdbc:postgresql://172.29.108.184:30474/ds_201
     username: root
-    password: root
+    password: O7cBceTlQphbCYyW
     hikari:
       connection-test-query: select 1
       minimum-idle: 5
@@ -56,27 +63,27 @@ spring:
       idle-timeout: 600000
       leak-detection-threshold: 0
       initialization-fail-timeout: 1
-  quartz:
-    auto-startup: false
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: never
-    properties:
-      org.quartz.threadPool:threadPriority: 5
-      org.quartz.jobStore.isClustered: true
-      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-      org.quartz.scheduler.instanceId: AUTO
-      org.quartz.jobStore.tablePrefix: QRTZ_
-      org.quartz.jobStore.acquireTriggersWithinLock: true
-      org.quartz.scheduler.instanceName: DolphinScheduler
-      org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
-      org.quartz.jobStore.useProperties: false
-      org.quartz.threadPool.makeThreadsDaemons: true
-      org.quartz.threadPool.threadCount: 25
-      org.quartz.jobStore.misfireThreshold: 60000
-      org.quartz.scheduler.makeSchedulerThreadDaemon: true
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-      org.quartz.jobStore.clusterCheckinInterval: 5000
+#  quartz:
+#    auto-startup: false
+#    job-store-type: jdbc
+#    jdbc:
+#      initialize-schema: never
+#    properties:
+#      org.quartz.threadPool:threadPriority: 5
+#      org.quartz.jobStore.isClustered: true
+#      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#      org.quartz.scheduler.instanceId: AUTO
+#      org.quartz.jobStore.tablePrefix: QRTZ_
+#      org.quartz.jobStore.acquireTriggersWithinLock: true
+#      org.quartz.scheduler.instanceName: DolphinScheduler
+#      org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
+#      org.quartz.jobStore.useProperties: false
+#      org.quartz.threadPool.makeThreadsDaemons: true
+#      org.quartz.threadPool.threadCount: 25
+#      org.quartz.jobStore.misfireThreshold: 60000
+#      org.quartz.scheduler.makeSchedulerThreadDaemon: true
+#      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+#      org.quartz.jobStore.clusterCheckinInterval: 5000
 
 management:
   endpoints:
@@ -91,7 +98,7 @@ registry:
   type: zookeeper
   zookeeper:
     namespace: dolphinscheduler
-    connect-string: localhost:2181
+    connectString: localhost:2181
     retry-policy:
       base-sleep-time: 60ms
       max-sleep: 300ms
@@ -103,14 +110,14 @@ registry:
 
 # Override by profile
 
----
-spring:
-  config:
-    activate:
-      on-profile: mysql
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/dolphinscheduler?useUnicode=true&characterEncoding=UTF-8
-  quartz:
-    properties:
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: mysql
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1:3306/dolphinscheduler?useUnicode=true&characterEncoding=UTF-8
+#  quartz:
+#    properties:
+#      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
